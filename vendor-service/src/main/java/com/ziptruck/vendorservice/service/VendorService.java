@@ -27,7 +27,6 @@ public class VendorService {
     public void newVendor(VendorRequest vendorRequest) {
         Vendor vendor = new Vendor();
         vendor.setName(vendorRequest.getName());
-        vendor.setAge(vendorRequest.getAge());
         vendor.setCategory(vendorRequest.getCategory());
 
         vendorRepository.save(vendor);
@@ -70,9 +69,7 @@ public class VendorService {
                 vendor.setName(vendorRequest.getName());
             }
 
-            if (vendorRequest.getAge() != null) {
-                vendor.setAge(vendorRequest.getAge());
-            }
+
 
             if (vendorRequest.getCategory() != null) {
                 vendor.setCategory(vendorRequest.getCategory());
@@ -89,7 +86,6 @@ public class VendorService {
         return new VendorResponse(
                 vendor.getVendorId(),
                 vendor.getName(),
-                vendor.getAge(),
                 vendor.getCategory()
         );
     }

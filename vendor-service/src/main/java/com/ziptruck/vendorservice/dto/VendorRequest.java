@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VendorRequest {
     private String name;
-    private Long age;
     private String category;
 }
