@@ -30,8 +30,8 @@ public class VendorController {
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Boolean Accepting(@RequestParam Long vendorId, @RequestParam Long customerId){
-        return vendorService.isAccepting(vendorId, customerId);
+    public Boolean isAccepting(@RequestParam Long vendorId, @RequestParam Long customerId, @RequestParam Long orderId){
+        return vendorService.isAccepting(vendorId, customerId, orderId);
     }
     @GetMapping("/{vendorId}")
     @ResponseStatus(HttpStatus.OK)

@@ -8,7 +8,6 @@ import com.ziptruck.orderservice.model.Order;
 import com.ziptruck.orderservice.model.OrderLineItems;
 import com.ziptruck.orderservice.repository.OrderRepository;
 import com.ziptruck.vendorservice.service.VendorService;
-import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
@@ -57,18 +56,15 @@ public class OrderService {
         boolean allItemsInCatalogue = Arrays.stream(CatalogueResponseArray)
                 .allMatch(CatalogueResponse::isInCatalogue);
         if (allItemsInCatalogue) {
-            orderRepository.save(order);
-            log.info("Order {} is placed", order.getOrderId());
-            boolean isAccepted= vendorService.isAccepting(vendorId, order.getCustomerId());
+            boolean isAccepted= vendorService.isAccepting(vendorId, order.getCustomerId(), order.getOrderId());
             if(isAccepted){
                 log.info("Order {} is accepted by vendor {}", order.getOrderId(), vendorId);
                 order.setOrderStatus("ACCEPTED");
-                orderRepository.save(order);
             }else{
                 log.info("Order {} is rejected by vendor {}", order.getOrderId(), vendorId);
                 order.setOrderStatus("REJECTED");
-                orderRepository.save(order);
             }
+            orderRepository.save(order);
         }else{
             throw new RuntimeException("Order cannot be placed as some items are not in the catalogue");
         }

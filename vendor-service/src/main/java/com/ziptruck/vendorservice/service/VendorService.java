@@ -1,6 +1,7 @@
 package com.ziptruck.vendorservice.service;
 
 
+import com.ziptruck.truckservice.service.TruckService;
 import com.ziptruck.vendorservice.dto.CustomerResponse;
 import com.ziptruck.vendorservice.dto.TruckResponse;
 import com.ziptruck.vendorservice.dto.VendorRequest;
@@ -9,6 +10,7 @@ import com.ziptruck.vendorservice.model.Vendor;
 import com.ziptruck.vendorservice.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,9 +23,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@ComponentScan(basePackages = "com.ziptruck.truckservice")
 public class VendorService {
     private final VendorRepository vendorRepository;
     private final WebClient webClient;
+    private final TruckService truckService;
     public void newVendor(VendorRequest vendorRequest) {
         Vendor vendor = new Vendor();
         vendor.setName(vendorRequest.getName());
@@ -94,9 +98,10 @@ public class VendorService {
         );
     }
 
-    public Boolean isAccepting(Long vendorId, Long customerId) {
+    public Boolean isAccepting(Long vendorId, Long customerId, Long orderId) {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));
+
         CustomerResponse customerResponse = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("http://localhost:8081/api/customer")
@@ -114,9 +119,19 @@ public class VendorService {
                 .retrieve()
                 .bodyToMono(TruckResponse[].class)
                 .block();
-        boolean locationMatch = Arrays.stream(truckResponseArray)
-                .flatMap(truckResponse -> truckResponse.getLocation().stream())
-                .anyMatch(truckLocation -> truckLocation.equals(location));
-        return locationMatch;
+        Long truckId = Arrays.stream(truckResponseArray)
+                .filter(truckResponse -> truckResponse.getLocation().contains(location))
+                .mapToLong(TruckResponse::getTruckId)
+                .findFirst()
+                .orElse(-1); // Provide a default value if no truckId is found
+
+        if (truckId != -1) {
+            // TruckId found
+            truckService.updateOrderList(truckId, orderId);
+            return true;
+        } else {
+            // No truck found with the given location.
+            return false;
+        }
     }
 }

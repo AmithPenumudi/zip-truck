@@ -3,6 +3,7 @@ package com.ziptruck.truckservice.service;
 import com.ziptruck.truckservice.dto.TruckRequest;
 import com.ziptruck.truckservice.dto.TruckResponse;
 import com.ziptruck.truckservice.model.Truck;
+import com.ziptruck.truckservice.model.orderList;
 import com.ziptruck.truckservice.repository.TruckRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,8 @@ public class TruckService {
     private final TruckRepository truckRepository;
     public void newTruck(TruckRequest truckRequest){
             Truck truck = new Truck();
-            truck.setLocation(truckRequest.getLocation());
-            truck.setOrderId(truckRequest.getOrderId());
+            truck.setLocationList(truckRequest.getLocationList());
+            truck.setOrderIdList(truckRequest.getOrderIdList());
             truck.setCustomerId(truckRequest.getCustomerId());
             truck.setVendorId(truckRequest.getVendorId());
 
@@ -64,12 +65,12 @@ public class TruckService {
         if (optionalTruck.isPresent()) {
             Truck truck = optionalTruck.get();
 
-            if (truckRequest.getLocation() != null) {
-                truck.setLocation(truckRequest.getLocation());
+            if (truckRequest.getLocationList() != null) {
+                truck.setLocationList(truckRequest.getLocationList());
             }
 
-            if (truckRequest.getOrderId() != null) {
-                truck.setOrderId(truckRequest.getOrderId());
+            if (truckRequest.getOrderIdList() != null) {
+                truck.setOrderIdList(truckRequest.getOrderIdList());
             }
 
             if (truckRequest.getCustomerId() != null) {
@@ -86,14 +87,46 @@ public class TruckService {
             throw new RuntimeException("Truck not found with id: " + truckId);
         }
     }
+    @Transactional
+    public void updateOrderList(Long truckId, Long orderId){
+        Optional<Truck> optionalTruck = truckRepository.findById(truckId);
+        if (optionalTruck.isPresent()) {
+            Truck truck = optionalTruck.get();
+            List<orderList> orderList = truck.getOrderIdList();
+            orderList.add(new orderList(orderId));
+            orderList.add((orderList) orderList);
+            truck.setOrderIdList(orderList);
+            truckRepository.save(truck);
+            log.info("Order with id {} has been added to truck with id {}", orderId, truckId);
+        } else {
+            throw new RuntimeException("Truck not found with id: " + truckId);
+        }
 
+
+    }
     private TruckResponse mapToTruckResponse(Truck truck) {
         return new TruckResponse(
                 truck.getTruckId(),
-                truck.getLocation(),
-                truck.getOrderId(),
+                truck.getLocationList(),
+                truck.getOrderIdList(),
                 truck.getCustomerId(),
                 truck.getVendorId()
         );
+    }
+
+    public TruckResponse getOrderIdsByTruckId(Long truckId) {
+        Optional<Truck> optionalTruck = truckRepository.findById(truckId);
+        if (optionalTruck.isPresent()) {
+            Truck truck = optionalTruck.get();
+            return new TruckResponse(
+                    truck.getTruckId(),
+                    truck.getLocationList(),
+                    truck.getOrderIdList(),
+                    truck.getCustomerId(),
+                    truck.getVendorId()
+            );
+        } else {
+            throw new RuntimeException("Truck not found with id: " + truckId);
+        }
     }
 }

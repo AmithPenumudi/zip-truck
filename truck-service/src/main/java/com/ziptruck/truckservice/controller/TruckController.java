@@ -32,7 +32,11 @@ public class TruckController {
     public TruckResponse getTruckById(@PathVariable Long truckId) {
         return truckService.getTruckById(truckId);
     }
-
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public TruckResponse getOrderIdsByTruckId(@RequestParam Long truckId) {
+        return truckService.getOrderIdsByTruckId(truckId);
+    }
     @DeleteMapping("/{truckId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTruckById(@PathVariable Long truckId) {
