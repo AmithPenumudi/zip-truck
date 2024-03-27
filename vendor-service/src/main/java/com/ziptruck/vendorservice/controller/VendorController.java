@@ -28,7 +28,7 @@ public class VendorController {
     public List<VendorResponse> getAllVendors(){
         return vendorService.getAllVendors();
     }
-    @GetMapping
+    @GetMapping("/vendor")
     @ResponseStatus(HttpStatus.OK)
     public Boolean isAccepting(@RequestParam Long vendorId, @RequestParam Long customerId, @RequestParam Long orderId){
         return vendorService.isAccepting(vendorId, customerId, orderId);
