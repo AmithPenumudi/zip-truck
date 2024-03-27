@@ -21,7 +21,6 @@ public class Truck {
     private Long truckId;
     private List<String> location;
     private String orderId;
-    private Long customerId;
     private Long vendorId;
 
 }
