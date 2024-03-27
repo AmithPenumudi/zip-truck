@@ -24,7 +24,6 @@ public class TruckService {
             Truck truck = new Truck();
             truck.setLocationList(truckRequest.getLocationList());
             truck.setOrderIdList(truckRequest.getOrderIdList());
-            truck.setCustomerId(truckRequest.getCustomerId());
             truck.setVendorId(truckRequest.getVendorId());
 
             truckRepository.save(truck);
@@ -73,10 +72,6 @@ public class TruckService {
                 truck.setOrderIdList(truckRequest.getOrderIdList());
             }
 
-            if (truckRequest.getCustomerId() != null) {
-                truck.setCustomerId(truckRequest.getCustomerId());
-            }
-
             if (truckRequest.getVendorId() != null) {
                 truck.setVendorId(truckRequest.getVendorId());
             }
@@ -109,7 +104,6 @@ public class TruckService {
                 truck.getTruckId(),
                 truck.getLocationList(),
                 truck.getOrderIdList(),
-                truck.getCustomerId(),
                 truck.getVendorId()
         );
     }
@@ -122,7 +116,6 @@ public class TruckService {
                     truck.getTruckId(),
                     truck.getLocationList(),
                     truck.getOrderIdList(),
-                    truck.getCustomerId(),
                     truck.getVendorId()
             );
         } else {

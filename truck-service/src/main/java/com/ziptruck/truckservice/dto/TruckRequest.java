@@ -17,6 +17,5 @@ import java.util.List;
 public class TruckRequest {
     private List<locationList> locationList;
     private List<orderList> orderIdList;
-    private Long customerId;
     private Long vendorId;
 }

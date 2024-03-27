@@ -14,10 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TruckResponse {
     private Long truckId;
-
     private List<locationList> locationList;
-
     private List<orderList> orderIdList;
-    private Long customerId;
     private Long vendorId;
 }
