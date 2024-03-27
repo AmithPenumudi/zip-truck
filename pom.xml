@@ -19,7 +19,6 @@
         <module>order-service</module>
         <module>truck-service</module>
         <module>vendor-service</module>
-        <module>discovery-server</module>
     </modules>
 
     <properties>

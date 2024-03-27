@@ -33,11 +33,6 @@ public class CatalogueController {
 
         return catalogueService.getCatalogueById(itemId);
     }
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<CatalogueResponse> isInCatalogue(@RequestParam List<String> itemNames, @RequestParam Long vendorId) {
-        return catalogueService.isInCatalogue(itemNames, vendorId);
-    }
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCatalogueById(@PathVariable Long itemId) {
