@@ -21,8 +21,12 @@ public class TruckController {
     public void newTruck(@RequestBody TruckRequest truckRequest){
         truckService.newTruck(truckRequest);
     }
-
-    @GetMapping
+    @GetMapping("/updateOrderList")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateOrderList(@RequestParam Long truckId, @RequestParam Long orderId){
+            truckService.updateOrderList(truckId, orderId);
+    }
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<TruckResponse> getAllTrucks(){
         return truckService.getAllTrucks();

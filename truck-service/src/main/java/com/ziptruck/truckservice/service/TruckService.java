@@ -38,7 +38,7 @@ public class TruckService {
                     .map(this::mapToTruckResponse)
                     .collect(Collectors.toList());
     }
-
+    @Transactional
     public TruckResponse getTruckById(Long truckId) {
         Optional<Truck> optionalTruck = truckRepository.findById(truckId);
         if (optionalTruck.isPresent()) {
@@ -107,7 +107,7 @@ public class TruckService {
                 truck.getVendorId()
         );
     }
-
+    @Transactional
     public TruckResponse getOrderIdsByTruckId(Long truckId) {
         Optional<Truck> optionalTruck = truckRepository.findById(truckId);
         if (optionalTruck.isPresent()) {
