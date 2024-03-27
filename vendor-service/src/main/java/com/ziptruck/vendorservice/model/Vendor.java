@@ -17,7 +17,6 @@ public class Vendor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vendorId;
     private String name;
-    private Long age;
     private String category;
 
 }

@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 public class VendorResponse {
     private Long vendorId;
     private String name;
-    private Long age;
     private String category;
 }
