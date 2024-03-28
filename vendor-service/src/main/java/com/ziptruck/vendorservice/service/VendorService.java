@@ -125,11 +125,11 @@ public class VendorService {
         //print customer location
         log.info("Customer location: {}", location);
 
-        Long truckId = 1L;
-
+        Long truckId = vendorId;
 
         if (truckId != -1) {
             // TruckId found
+            log.info(truckId.toString());
             truckService.updateOrderList(truckId, orderId);
             return true;
         } else {

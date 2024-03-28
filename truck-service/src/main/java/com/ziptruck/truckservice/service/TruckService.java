@@ -83,6 +83,8 @@ public class TruckService {
     }
     @Transactional
     public void updateOrderList(Long truckId, Long orderId) {
+        log.info(truckId.toString());
+        log.info(orderId.toString());
         Optional<Truck> optionalTruck = truckRepository.findById(truckId);
         if (optionalTruck.isPresent()) {
             Truck truck = optionalTruck.get();
@@ -92,8 +94,6 @@ public class TruckService {
         } else {
             throw new RuntimeException("Truck not found with id: " + truckId);
         }
-
-
     }
     private TruckResponse mapToTruckResponse(Truck truck) {
         return new TruckResponse(

@@ -120,14 +120,14 @@ public class OrderService {
 
 
     @Transactional
-    public void deleteOrderByIdAndSkuCode(Long orderId, String skuCode) {
+    public void deleteOrderByIdAndItemName(Long orderId, String itemName) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             List<OrderLineItems> orderLineItemsList = order.getOrderLineItemsList();
             // Find and remove the order line item with the given skuCode
             Optional<OrderLineItems> lineItemToRemove = orderLineItemsList.stream()
-                    .filter(item -> item.getItemName().equals(skuCode))
+                    .filter(item -> item.getItemName().equals(itemName))
                     .findFirst();
             lineItemToRemove.ifPresent(orderLineItems -> {
                 orderLineItemsList.remove(orderLineItems);
@@ -138,7 +138,7 @@ public class OrderService {
                 } else {
                     // Save the order after removing the line item
                     orderRepository.save(order);
-                    log.info("Order line item with skuCode {} has been deleted from order with id {}", skuCode, orderId);
+                    log.info("Order line item with itemName {} has been deleted from order with id {}", itemName, orderId);
                 }
             });
         } else {
@@ -148,14 +148,14 @@ public class OrderService {
 
 
         @Transactional
-        public void updateOrderByIdAndSkuCode(Long orderId, String skuCode, Integer quantity) {
+        public void updateOrderByIdAndItemName(Long orderId, String itemName, Integer quantity) {
             Optional<Order> optionalOrder = orderRepository.findById(orderId);
             if (optionalOrder.isPresent()) {
                 Order order = optionalOrder.get();
                 List<OrderLineItems> orderLineItemsList = order.getOrderLineItemsList();
                 // Find the order line item with the given skuCode
                 Optional<OrderLineItems> lineItemToUpdate = orderLineItemsList.stream()
-                        .filter(item -> item.getItemName().equals(skuCode))
+                        .filter(item -> item.getItemName().equals(itemName))
                         .findFirst();
                 if (lineItemToUpdate.isPresent()) {
                     // Update the found order line item
@@ -163,9 +163,9 @@ public class OrderService {
                     orderLineItem.setQuantity(quantity);
                     // Save the order after updating the line item
                     orderRepository.save(order);
-                    log.info("Order line item with skuCode {} has been updated in order with id {}", skuCode, orderId);
+                    log.info("Order line item with skuCode {} has been updated in order with id {}", itemName, orderId);
                 } else {
-                    throw new RuntimeException("Order line item with skuCode " + skuCode + " not found in order with id: " + orderId);
+                    throw new RuntimeException("Order line item with skuCode " + itemName + " not found in order with id: " + orderId);
                 }
             } else {
                 throw new RuntimeException("Order not found with id: " + orderId);

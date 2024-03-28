@@ -44,12 +44,12 @@ public class OrderController {
         orderService.deleteOrderById(orderId);
     }
     @DeleteMapping("/{orderId}/lineItems/{skuCode}")
-    public void deleteOrderLineItemByIdAndSkuCode(@PathVariable Long orderId, @PathVariable String skuCode) {
-        orderService.deleteOrderByIdAndSkuCode(orderId, skuCode);
+    public void deleteOrderByIdAndItemName(@PathVariable Long orderId, @PathVariable String itemName) {
+        orderService.deleteOrderByIdAndItemName(orderId, itemName);
     }
     @PutMapping("/{orderId}/lineItems/{skuCode},{quantity}")
-    public void updateOrderByIdAndSkuCode(@PathVariable Long orderId, @PathVariable String skuCode, @PathVariable Integer quantity) {
-        orderService.updateOrderByIdAndSkuCode(orderId, skuCode, quantity);
+    public void updateOrderByIdAndItemName(@PathVariable Long orderId, @PathVariable String skuCode, @PathVariable Integer quantity) {
+        orderService.updateOrderByIdAndItemName(orderId, skuCode, quantity);
     }
     @PutMapping("/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

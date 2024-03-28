@@ -1,0 +1,53 @@
+#logging.level.root=INFO
+#logging.level.org.springframework.cloud.gateway.route.RouteDefinitionLocator = INFO
+#logging.level.org.springframework.cloud.gateway= TRACE
+#
+###Catalogue service
+#
+###Order service
+#
+###Customer service
+#
+#
+###truck-service
+#
+###vendor-service
+
+server:
+  port: 8085
+
+spring:
+  cloud:
+    gateway:
+      mvc:
+        routes:
+        - id: customer_service_route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/customers/**
+          filters:
+            - PrefixPath=/api
+        - id: vendor_service_route
+          uri: http://localhost:8084
+          predicates:
+            - Path=/vendors/**
+          filters:
+            - PrefixPath=/api
+        - id: catalogue_service_route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/products/**
+          filters:
+            - PrefixPath=/api
+        - id: order_service_route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/orders/**
+          filters:
+            - PrefixPath=/api
+        - id: truck_service_route
+          uri: http://localhost:8083
+          predicates:
+            - Path=/trucks/**
+          filters:
+            - PrefixPath=/api
