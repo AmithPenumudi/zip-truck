@@ -10,6 +10,7 @@
         <module name="vendor-service" />
         <module name="catalogue-service" />
         <module name="customer-service" />
+        <module name="authentication-serivce" />
         <module name="api-gateway" />
         <module name="order-service" />
         <module name="truck-service" />
@@ -22,6 +23,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="authentication-serivce" options="-parameters" />
       <module name="catalogue-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="discovery-server" options="-parameters" />

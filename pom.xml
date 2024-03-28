@@ -20,6 +20,7 @@
         <module>truck-service</module>
         <module>vendor-service</module>
         <module>api-gateway</module>
+        <module>authentication-serivce</module>
 
     </modules>
 
