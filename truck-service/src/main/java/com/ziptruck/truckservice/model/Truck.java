@@ -19,10 +19,7 @@ public class Truck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long truckId;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<locationList> locationList;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<orderList> orderIdList;
+    private String location;
+    private Long orderId;
     private Long vendorId;
-
 }

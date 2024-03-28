@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class OrderServiceWebClientConfig {
     @Bean
-    public WebClient.Builder OrderServiceWebClient() {
-        return WebClient.builder();
+    public WebClient OrderServiceWebClient() {
+        return WebClient.builder().build();
     }
 }

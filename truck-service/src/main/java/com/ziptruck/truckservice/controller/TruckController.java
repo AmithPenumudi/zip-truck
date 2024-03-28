@@ -21,9 +21,9 @@ public class TruckController {
     public void newTruck(@RequestBody TruckRequest truckRequest){
         truckService.newTruck(truckRequest);
     }
-    @GetMapping("/updateOrderList")
+    @GetMapping("/updateOrderId")
     @ResponseStatus(HttpStatus.OK)
-    public void updateOrderList(@RequestParam Long truckId, @RequestParam Long orderId){
+    public void updateOrderId(@RequestParam Long truckId, @RequestParam Long orderId){
             truckService.updateOrderList(truckId, orderId);
     }
     @GetMapping("/all")
@@ -40,6 +40,11 @@ public class TruckController {
     @ResponseStatus(HttpStatus.OK)
     public TruckResponse getOrderIdsByTruckId(@RequestParam Long truckId) {
         return truckService.getOrderIdsByTruckId(truckId);
+    }
+    @GetMapping("/vendor/{vendorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public TruckResponse getTruckByVendorId(@PathVariable Long vendorId){
+        return truckService.getTruckByVendorId(vendorId);
     }
     @DeleteMapping("/{truckId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

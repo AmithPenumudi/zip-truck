@@ -1,7 +1,5 @@
 package com.ziptruck.truckservice.dto;
 
-import com.ziptruck.truckservice.model.locationList;
-import com.ziptruck.truckservice.model.orderList;
 
 import lombok.AllArgsConstructor;
 
@@ -15,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 
 public class TruckRequest {
-    private List<locationList> locationList;
-    private List<orderList> orderIdList;
+    private String location;
+    private Long orderId;
     private Long vendorId;
 }

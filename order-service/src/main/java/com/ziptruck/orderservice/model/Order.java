@@ -16,9 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderLineItems> orderLineItemsList;
     private Long customerId;

@@ -3,7 +3,6 @@ package com.ziptruck.truckservice.service;
 import com.ziptruck.truckservice.dto.TruckRequest;
 import com.ziptruck.truckservice.dto.TruckResponse;
 import com.ziptruck.truckservice.model.Truck;
-import com.ziptruck.truckservice.model.orderList;
 import com.ziptruck.truckservice.repository.TruckRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +21,8 @@ public class TruckService {
     private final TruckRepository truckRepository;
     public void newTruck(TruckRequest truckRequest){
             Truck truck = new Truck();
-            truck.setLocationList(truckRequest.getLocationList());
-            truck.setOrderIdList(truckRequest.getOrderIdList());
+            truck.setLocation(truckRequest.getLocation());
+            truck.setOrderId(truckRequest.getOrderId());
             truck.setVendorId(truckRequest.getVendorId());
 
             truckRepository.save(truck);
@@ -64,12 +63,12 @@ public class TruckService {
         if (optionalTruck.isPresent()) {
             Truck truck = optionalTruck.get();
 
-            if (truckRequest.getLocationList() != null) {
-                truck.setLocationList(truckRequest.getLocationList());
+            if (truckRequest.getLocation() != null) {
+                truck.setLocation(truckRequest.getLocation());
             }
 
-            if (truckRequest.getOrderIdList() != null) {
-                truck.setOrderIdList(truckRequest.getOrderIdList());
+            if (truckRequest.getOrderId() != null) {
+                truck.setOrderId(truckRequest.getOrderId());
             }
 
             if (truckRequest.getVendorId() != null) {
@@ -83,16 +82,13 @@ public class TruckService {
         }
     }
     @Transactional
-    public void updateOrderList(Long truckId, Long orderId){
+    public void updateOrderList(Long truckId, Long orderId) {
         Optional<Truck> optionalTruck = truckRepository.findById(truckId);
         if (optionalTruck.isPresent()) {
             Truck truck = optionalTruck.get();
-            List<orderList> orderList = truck.getOrderIdList();
-            orderList.add(new orderList(orderId));
-            orderList.add((orderList) orderList);
-            truck.setOrderIdList(orderList);
+            truck.setOrderId(orderId);
             truckRepository.save(truck);
-            log.info("Order with id {} has been added to truck with id {}", orderId, truckId);
+            log.info("Order id for truck with id {} has been updated", truckId);
         } else {
             throw new RuntimeException("Truck not found with id: " + truckId);
         }
@@ -102,8 +98,8 @@ public class TruckService {
     private TruckResponse mapToTruckResponse(Truck truck) {
         return new TruckResponse(
                 truck.getTruckId(),
-                truck.getLocationList(),
-                truck.getOrderIdList(),
+                truck.getLocation(),
+                truck.getOrderId(),
                 truck.getVendorId()
         );
     }
@@ -114,12 +110,29 @@ public class TruckService {
             Truck truck = optionalTruck.get();
             return new TruckResponse(
                     truck.getTruckId(),
-                    truck.getLocationList(),
-                    truck.getOrderIdList(),
+                    truck.getLocation(),
+                    truck.getOrderId(),
                     truck.getVendorId()
             );
         } else {
             throw new RuntimeException("Truck not found with id: " + truckId);
+        }
+    }
+// The return value of the below function has to be TruckResponse[] instead of TruckResponse
+    @Transactional
+
+    public TruckResponse getTruckByVendorId(Long vendorId) {
+        Optional<Truck> optionalTruck = truckRepository.findByVendorId(vendorId);
+        if (optionalTruck.isPresent()) {
+            Truck truck = optionalTruck.get();
+            return new TruckResponse(
+                    truck.getTruckId(),
+                    truck.getLocation(),
+                    truck.getOrderId(),
+                    truck.getVendorId()
+            );
+        } else {
+            throw new RuntimeException("Truck not found with vendor id: " + vendorId);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.ziptruck.vendorservice.service;
 
 import com.ziptruck.truckservice.service.TruckService;
 import com.ziptruck.vendorservice.dto.CustomerResponse;
-import com.ziptruck.vendorservice.dto.TruckResponse;
 import com.ziptruck.vendorservice.dto.VendorRequest;
 import com.ziptruck.vendorservice.dto.VendorResponse;
 import com.ziptruck.vendorservice.model.Vendor;
@@ -14,6 +13,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,31 +96,37 @@ public class VendorService {
     }
 
     public Boolean isAccepting(Long vendorId, Long customerId, Long orderId) {
-        Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));
 
-        CustomerResponse customerResponse = webClient.get()
+        // Get the customer location// print vendorId and customerId and orderId
+        log.info("In VENDOR VendorId: {}, CustomerId: {}, OrderId: {}", vendorId, orderId, customerId);
+        Mono<CustomerResponse[]> customerResponsesMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("http://localhost:8081/api/customer")
+                        .scheme("http")
+                        .host("localhost")  // Specify the host here
+                        .port(8081)  // Specify the port here if needed
+                        .path("/api/customer")  // Specify the path here
                         .queryParam("customerId", customerId)
                         .build())
                 .retrieve()
-                .bodyToMono(CustomerResponse.class)
-                .block();
-        String location = customerResponse.getLocation();
-        TruckResponse[] truckResponseArray = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("http://localhost:8083/api/truck")
-                        .queryParam("vendorId", vendorId)
-                        .build())
-                .retrieve()
-                .bodyToMono(TruckResponse[].class)
-                .block();
-        Long truckId = Arrays.stream(truckResponseArray)
-                .filter(truckResponse -> truckResponse.getLocation().contains(location))
-                .mapToLong(TruckResponse::getTruckId)
-                .findFirst()
-                .orElse(-1); // Provide a default value if no truckId is found
+                .bodyToMono(CustomerResponse[].class);
+
+        customerResponsesMono.subscribe(customerResponses -> {
+            // Handle the array of CustomerResponse objects
+            for (CustomerResponse customerResponse : customerResponses) {
+                log.info("Customer response: {}", customerResponse);
+            }
+        });
+
+        //print the response
+        log.info("Customer response: {}", customerResponsesMono.block());
+
+        //get location from customerResponses
+        String location = customerResponsesMono.block()[0].getLocation();
+        //print customer location
+        log.info("Customer location: {}", location);
+
+        Long truckId = 1L;
+
 
         if (truckId != -1) {
             // TruckId found

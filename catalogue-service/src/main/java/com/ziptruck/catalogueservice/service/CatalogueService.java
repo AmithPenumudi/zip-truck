@@ -94,7 +94,6 @@ public class CatalogueService {
                                 .itemDescription(catalogue.getItemDescription())
                                 .vendorId(catalogue.getVendorId())
                                 .price(catalogue.getPrice())
-                                .isInCatalogue(catalogue.getItemId()>0)
                                 .build()
                 ).toList();
     }
@@ -104,7 +103,7 @@ public class CatalogueService {
                 catalogue.getItemName(),
                 catalogue.getItemDescription(),
                 catalogue.getVendorId(),
-                catalogue.getPrice(),true);
+                catalogue.getPrice());
     }
 
 

@@ -17,6 +17,4 @@ public class CatalogueResponse {
     private String itemDescription;
     private Long vendorId;
     private BigDecimal price;
-    private boolean isInCatalogue;
-
 }

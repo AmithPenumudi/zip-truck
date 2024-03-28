@@ -1,7 +1,6 @@
 package com.ziptruck.orderservice.service;
 
 import com.ziptruck.orderservice.dto.CatalogueResponse;
-import com.ziptruck.orderservice.dto.OrderLineItemsDto;
 import com.ziptruck.orderservice.dto.OrderRequest;
 import com.ziptruck.orderservice.dto.OrderResponse;
 import com.ziptruck.orderservice.model.Order;
@@ -10,6 +9,7 @@ import com.ziptruck.orderservice.repository.OrderRepository;
 import com.ziptruck.vendorservice.service.VendorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +25,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @ComponentScan(basePackages = "com.ziptruck.vendorservice")
 public class OrderService {
-
     private final OrderRepository orderRepository;
     private final WebClient webClient;
     private final VendorService vendorService;
     public void placeOrder(OrderRequest orderRequest){
         Order order = new Order();
 
-        List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsDtoList()
+        List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsList()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        order.setOrderId(orderRequest.getOrderId());
         order.setOrderLineItemsList(orderLineItems);
         order.setCustomerId(orderRequest.getCustomerId());
         order.setVendorId(orderRequest.getVendorId());
@@ -43,18 +43,42 @@ public class OrderService {
         List<String> itemNames = order.getOrderLineItemsList().stream()
                         .map(OrderLineItems::getItemName)
                                 .toList();
+        //print the item list
+        log.info("Item names: {}", itemNames);
+
         Long vendorId = order.getVendorId();
-        CatalogueResponse[] CatalogueResponseArray =  webClient.get()
+        CatalogueResponse[] catalogueResponses = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("http://localhost:8080/api/catalogue")
+                        .scheme("http")
+                        .host("localhost")  // Specify the host here
+                        .port(8080)  // Specify the port here if needed
+                        .path("/api/catalogue")  // Specify the path here
                         .queryParam("vendorId", vendorId)
-                        .queryParam("itemNames", itemNames)
                         .build())
                 .retrieve()
                 .bodyToMono(CatalogueResponse[].class)
                 .block();
-        boolean allItemsInCatalogue = Arrays.stream(CatalogueResponseArray)
-                .allMatch(CatalogueResponse::isInCatalogue);
+        //print the response
+        log.info("Catalogue response: {}", Arrays.toString(catalogueResponses));
+
+        //get itemNames from catalogueResponses into a list of strings
+        List<String> itemNamesFromCatalogue = Arrays.stream(catalogueResponses)
+                .map(CatalogueResponse::getItemName)
+                .collect(Collectors.toList());
+
+
+        //print the itemNames from catalogueResponses
+        log.info("Item names from catalogue: {}", itemNamesFromCatalogue);
+
+        //compare itemNames form orderRequest with itemNames from catalogueResponses using the above list to see if all of itemNames from request are in catalogue
+
+        boolean allItemsInCatalogue = itemNames.stream()
+                .allMatch(itemNamesFromCatalogue::contains);
+
+//print the result
+        log.info("All items in catalogue: {}", allItemsInCatalogue);
+
+
         if (allItemsInCatalogue) {
             boolean isAccepted= vendorService.isAccepting(vendorId, order.getCustomerId(), order.getOrderId());
             if(isAccepted){
@@ -157,8 +181,8 @@ public class OrderService {
             Order order = optionalCatalogue.get();
 
 
-            if (orderRequest.getOrderLineItemsDtoList() != null) {
-                List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsDtoList()
+            if (orderRequest.getOrderLineItemsList() != null) {
+                List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsList()
                         .stream()
                         .map(this::mapToDto)
                         .collect(Collectors.toList());
@@ -189,10 +213,10 @@ private OrderResponse mapToOrderResponse(Order order){
             order.getOrderStatus()
     );
 }
-    private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
-        OrderLineItems orderLineItems = new OrderLineItems();
-        orderLineItems.setQuantity(orderLineItemsDto.getQuantity());
-        orderLineItems.setItemName(orderLineItemsDto.getItemName());
-        return orderLineItems;
+    private OrderLineItems mapToDto(OrderLineItems orderLineItems) {
+        OrderLineItems orderLineItem = new OrderLineItems();
+        orderLineItem.setQuantity(orderLineItems.getQuantity());
+        orderLineItem.setItemName(orderLineItems.getItemName());
+        return orderLineItem;
     }
 }
